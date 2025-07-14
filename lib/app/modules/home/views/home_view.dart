@@ -9,6 +9,11 @@ class HomeView extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
+     appBar: AppBar(
+       backgroundColor: Colors.white,
+       surfaceTintColor: Colors.transparent,
+     ),
       body: SingleChildScrollView(
         child: Column(
           children: [timer(), const SizedBox(height: 10), driverDetails()],
@@ -17,7 +22,6 @@ class HomeView extends GetView<HomeController> {
     );
   }
 }
-
 Widget timer() {
   final controller = Get.find<HomeController>();
 
@@ -44,8 +48,8 @@ Widget timer() {
                         date == null
                             ? "DD/mm/yy"
                             : "${date.day.toString().padLeft(2, '0')}/"
-                                  "${date.month.toString().padLeft(2, '0')}/"
-                                  "${date.year}",
+                            "${date.month.toString().padLeft(2, '0')}/"
+                            "${date.year}",
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -84,21 +88,41 @@ Widget timer() {
           ),
         ),
         const SizedBox(height: 16),
-        Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.red),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Text(
-            "Select Competition number",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-        ),
+
+        //
+        Obx(() {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.red),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: DropdownButtonHideUnderline(
+              child: DropdownButton<String>(
+                isExpanded: true,
+                hint: const Text(
+                  "Select Competition number",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                value: controller.selectedCompetition.value,
+                items: controller.competitionNumbers.map((String number) {
+                  return DropdownMenuItem<String>(
+                    value: number,
+                    child: Text(number),
+                  );
+                }).toList(),
+                onChanged: controller.selectCompetition,
+                icon: const SizedBox.shrink(), // ✅ hide dropdown arrow
+              ),
+            ),
+          );
+        }),
+
       ],
     ),
   );
 }
+
 
 Widget driverDetails() {
   return Padding(
